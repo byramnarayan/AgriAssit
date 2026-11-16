@@ -37,14 +37,18 @@ app.add_middleware(
 # Exception handlers
 app.add_exception_handler(AppException, app_exception_handler)
 
-# Ensure upload directories exist
+# Ensure upload and local storage directories exist
 os.makedirs("uploads", exist_ok=True)
 os.makedirs("uploads/plants", exist_ok=True)
 os.makedirs("uploads/farms", exist_ok=True)
+os.makedirs("local_s3", exist_ok=True)
+os.makedirs("local_s3/plants", exist_ok=True)
+os.makedirs("local_s3/farms", exist_ok=True)
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+app.mount("/local_s3", StaticFiles(directory="local_s3"), name="local_s3")
 
 # Templates
 templates = Jinja2Templates(directory="app/templates")
@@ -91,7 +95,7 @@ async def shutdown_event():
 
 @app.get("/")
 async def root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="index.html")
 
 
 @app.api_route("/health", methods=["GET", "HEAD"])
@@ -120,55 +124,55 @@ async def neo4j_health_check():
 # Web page routes
 @app.get("/login")
 async def login_page(request: Request):
-    return templates.TemplateResponse("auth/login.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="auth/login.html")
 
 @app.get("/register")
 async def register_page(request: Request):
-    return templates.TemplateResponse("auth/register.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="auth/register.html")
 
 @app.get("/dashboard")
 async def dashboard_page(request: Request):
-    return templates.TemplateResponse("dashboard.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="dashboard.html")
 
 @app.get("/plants/scanner")
 async def plant_scanner_page(request: Request):
-    return templates.TemplateResponse("plants/scanner.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="plants/scanner.html")
 
 @app.get("/plants/history")
 async def plant_history_page(request: Request):
-    return templates.TemplateResponse("plants/history.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="plants/history.html")
 
 @app.get("/farms/create")
 async def create_farm_page(request: Request):
-    return templates.TemplateResponse("farms/create.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="farms/create.html")
 
 @app.get("/farms")
 async def farms_index_page(request: Request):
-    return templates.TemplateResponse("farms/index.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="farms/index.html")
 
 @app.get("/farms/{farm_id}")
 async def farm_detail_page(request: Request, farm_id: str):
-    return templates.TemplateResponse("farms/detail.html", {"request": request, "farm_id": farm_id})
+    return templates.TemplateResponse(request=request, name="farms/detail.html", context={"farm_id": farm_id})
 
 @app.get("/admin")
 async def admin_login_page(request: Request):
-    return templates.TemplateResponse("admin/login.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="admin/login.html")
 
 @app.get("/admin/dashboard")
 async def admin_dashboard_page(request: Request):
-    return templates.TemplateResponse("admin/dashboard.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="admin/dashboard.html")
 
 @app.get("/recommendations")
 async def recommendations_page(request: Request):
-    return templates.TemplateResponse("recommendations/form.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="recommendations/form.html")
 
 @app.get("/alerts")
 async def alerts_page(request: Request):
-    return templates.TemplateResponse("alerts/list.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="alerts/list.html")
 
 @app.get("/leaderboard")
 async def leaderboard_page(request: Request):
-    return templates.TemplateResponse("leaderboard.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="leaderboard.html")
 
 if __name__ == "__main__":
     import uvicorn

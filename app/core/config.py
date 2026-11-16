@@ -16,9 +16,14 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite:///./agritech.db"
     
     # Google Gemini API & Groq
+    GOOGLE_API_KEY: Optional[str] = None
     GEMINI_API_KEY: Optional[str] = None
     GEMINI_API_KEY_POOL: Optional[str] = None
     GROQ_API_KEY: Optional[str] = None
+    GROQ_API_KEY_1: Optional[str] = None
+    GROQ_API_KEY_2: Optional[str] = None
+    GROQ_API_KEY_3: Optional[str] = None
+    GROQ_MODEL: str = "openai/gpt-oss-120b"
     
     # File Upload
     MAX_UPLOAD_SIZE_MB: int = 10

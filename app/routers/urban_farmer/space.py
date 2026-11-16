@@ -52,7 +52,7 @@ def _convert_neo4j_types(data):
 @router.get("/dashboard", response_class=HTMLResponse)
 async def urban_dashboard_page(request: Request):
     """Render the Urban Farmer dashboard"""
-    return templates.TemplateResponse("urban_farmer/dashboard.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="urban_farmer/dashboard.html")
 
 @router.get("/list", response_model=List[dict])
 async def list_urban_spaces(current_user: dict = Depends(get_current_urban_farmer)):
@@ -78,7 +78,7 @@ async def list_urban_spaces(current_user: dict = Depends(get_current_urban_farme
 @router.get("/submit", response_class=HTMLResponse)
 async def submit_space_page(request: Request):
     """Render the Urban Space Submission page (Auth handled by JS)"""
-    return templates.TemplateResponse("urban_farmer/space_submit.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="urban_farmer/space_submit.html")
 
 @router.post("/submit", response_model=SpaceRecordResponse)
 async def submit_space(
@@ -399,8 +399,9 @@ async def view_planting_plan_report(
         }
         
         return templates.TemplateResponse(
-            "urban_farmer/plan_report.html", 
-            {"request": request, "plan": plan_dict}
+            request=request,
+            name="urban_farmer/plan_report.html", 
+            context={"plan": plan_dict}
         )
     finally:
         session.close()

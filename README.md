@@ -120,25 +120,45 @@ git clone https://github.com/Sarvesh-Bhartu/agriassist.git
 cd agriassist
 ```
 
-### 2. Create Virtual Environment
+### 2. Create Virtual Environment & Install Dependencies
+
+You can use either **`uv`** (fastest, recommended) or standard `pip`:
+
+#### Using `uv` (Recommended):
+```bash
+# Create virtual environment with Python 3.11
+uv venv --python 3.11
+
+# Windows (PowerShell)
+.\.venv\Scripts\Activate.ps1
+# Linux / macOS
+source .venv/bin/activate
+
+# Install dependencies
+uv pip install -r requirements.txt
+```
+
+#### Using standard `pip`:
 ```bash
 # Windows (PowerShell)
 python -m venv .venv
-.venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate.ps1
 
 # Linux / macOS
 python3 -m venv .venv
 source .venv/bin/activate
-```
 
-### 3. Install Dependencies
-```bash
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 4. Configure Environment Variables
+### 3. Configure Environment Variables
 Copy `.env.example` to create your `.env` file:
 ```bash
+# Windows
+copy .env.example .env
+
+# Linux / macOS
 cp .env.example .env
 ```
 
@@ -150,11 +170,13 @@ APP_ENV=development
 SECRET_KEY=your-strong-secret-key-for-jwt
 DEBUG=True
 
-# Database (PostgreSQL on Supabase)
-# For local SQLite testing: DATABASE_URL=sqlite:///./agritech.db
-DATABASE_URL=postgresql://postgres.your-project:password@aws-0-region.pooler.supabase.com:6543/postgres
+# Database
+# Default: SQLite (Automatic fallback applies if PostgreSQL connection fails)
+DATABASE_URL=sqlite:///./agritech.db
+# Or PostgreSQL on Supabase:
+# DATABASE_URL=postgresql://postgres.your-project:password@aws-0-region.pooler.supabase.com:6543/postgres
 
-# Supabase Cloud Storage
+# Storage (Optional - automatically falls back to local ./local_s3 storage)
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_SERVICE_KEY=your-supabase-service-role-key
 
@@ -167,20 +189,9 @@ NEO4J_DATABASE=neo4j
 # Google Gemini AI & Rotation Pool
 GEMINI_API_KEY=your-primary-gemini-api-key
 GEMINI_API_KEY_POOL=key1,key2,key3,key4
-
-# Groq API (Zero-downtime text fallback)
-GROQ_API_KEY=your-groq-api-key
-
-# Twilio Telephony & WebRTC Voice Bot (IVR)
-TWILIO_ACCOUNT_SID=your-twilio-account-sid
-TWILIO_AUTH_TOKEN=your-twilio-auth-token
-TWILIO_API_KEY=your-twilio-api-key
-TWILIO_API_SECRET=your-twilio-api-secret
-TWILIO_TWIML_APP_SID=your-twiml-app-sid
-TWILIO_PHONE_NUMBER=+1xxxxxxxxxx
 ```
 
-### 5. Seed Initial Data
+### 4. Seed Initial Data (Optional)
 ```bash
 # Initialize DB tables and create default admin
 python script_create_admin.py
@@ -195,16 +206,22 @@ python seed_prices.py
 python sync_neo4j.py
 ```
 
-### 6. Run the Application
+### 5. Run the Application
+
+#### With `uv` (Recommended):
 ```bash
-# Development server with hot reload
+uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+#### With activated virtual environment:
+```bash
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### 7. Access the Application
+### 6. Access the Application
 - **Web App**: [http://localhost:8000](http://localhost:8000)
 - **Interactive Swagger Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
-- **ReDoc Documentation**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
+- **Health Check**: [http://localhost:8000/health](http://localhost:8000/health)
 - **Admin Portal**: [http://localhost:8000/admin](http://localhost:8000/admin)
 - **Urban Farmer Ecosystem**: [http://localhost:8000/urban/space/dashboard](http://localhost:8000/urban/space/dashboard)
 
